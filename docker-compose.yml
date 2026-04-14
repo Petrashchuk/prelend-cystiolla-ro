@@ -3,5 +3,5 @@ services:
     build: .
     env_file: .env
     ports:
-      - "3010:80"
+      - "${PORT:-3010}:80"
     restart: unless-stopped
