@@ -1,19 +1,15 @@
-FROM nginx:alpine
+FROM node:20-alpine
 
-# Встановлюємо gettext для envsubst
 RUN apk add --no-cache gettext
 
-# Копіюємо статику
-COPY . /usr/share/nginx/html
+WORKDIR /app
 
-# Копіюємо конфіги
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-EXPOSE 80
+COPY public/ ./public/
+COPY server/ ./server/
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
 
 HEALTHCHECK --interval=300s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost:${PORT:-4000}/ || exit 1
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
