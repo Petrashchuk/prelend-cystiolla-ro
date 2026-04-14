@@ -10,4 +10,8 @@ for file in \
   mv "$file.tmp" "$file"
 done
 
+# Підставляємо PORT в nginx.conf
+envsubst '${PORT}' < /etc/nginx/conf.d/default.conf > /tmp/default.conf
+mv /tmp/default.conf /etc/nginx/conf.d/default.conf
+
 exec nginx -g 'daemon off;'
