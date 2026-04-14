@@ -1,0 +1,7 @@
+services:
+  prelander:
+    build: .
+    env_file: .env
+    ports:
+      - "3010:80"
+    restart: unless-stopped
