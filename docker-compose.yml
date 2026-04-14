@@ -1,7 +1,13 @@
 services:
   prelander:
     build: .
+    container_name: prelend-cystiolla-ro
+    restart: unless-stopped
     env_file: .env
     ports:
       - "127.0.0.1:${PORT:-4000}:${PORT:-4000}"
-    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
