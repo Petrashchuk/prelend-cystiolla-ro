@@ -61,14 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
     observer.observe(firstCta);
   }
 
-  // ─── BACK BUTTON INTERCEPT (mobile exit-intent) ──────────────────────────
+  // ─── BACK BUTTON → redirect to offer (soft, no confirm dialog) ──────────
   history.pushState(null, '', location.href);
   window.addEventListener('popstate', function () {
-    if (confirm('Ești sigur că vrei să pleci?\n\nOferta specială pentru Cystiolla este disponibilă doar astăzi!')) {
-      history.back();
-    } else {
-      history.pushState(null, '', location.href);
-    }
+    window.location.href = OFFER_URL;
   });
 
   // ─── COMMENTS LOAD MORE ─────────────────────────────────────────────────
@@ -78,6 +74,49 @@ document.addEventListener('DOMContentLoaded', function () {
     loadMoreBtn.addEventListener('click', function () {
       hiddenComments.forEach(function (c) { c.classList.remove('hidden'); });
       loadMoreBtn.style.display = 'none';
+    });
+  }
+
+  // ─── READING PROGRESS BAR ───────────────────────────────────────────────
+  var progressBar = document.getElementById('readingProgress');
+  if (progressBar) {
+    window.addEventListener('scroll', function () {
+      var scrollTop = window.scrollY || document.documentElement.scrollTop;
+      var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      progressBar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+    }, { passive: true });
+  }
+
+  // ─── LIVE VIEWERS COUNTER ────────────────────────────────────────────────
+  var liveEl = document.getElementById('liveViewers');
+  if (liveEl) {
+    var viewers = 18 + Math.floor(Math.random() * 16);
+    liveEl.textContent = viewers;
+    setInterval(function () {
+      viewers += (Math.random() < 0.5 ? 1 : -1) * (Math.random() < 0.3 ? 2 : 1);
+      viewers = Math.max(14, Math.min(38, viewers));
+      liveEl.textContent = viewers;
+    }, 28000);
+  }
+
+  // ─── EXIT INTENT POPUP (desktop mouseleave) ──────────────────────────────
+  var exitPopup = document.getElementById('exitPopup');
+  var exitClose = document.getElementById('exitPopupClose');
+  var exitShown = false;
+  if (exitPopup) {
+    document.addEventListener('mouseleave', function (e) {
+      if (!exitShown && e.clientY < 10) {
+        exitShown = true;
+        exitPopup.classList.add('visible');
+      }
+    });
+    if (exitClose) {
+      exitClose.addEventListener('click', function () {
+        exitPopup.classList.remove('visible');
+      });
+    }
+    exitPopup.addEventListener('click', function (e) {
+      if (e.target === exitPopup) exitPopup.classList.remove('visible');
     });
   }
 
